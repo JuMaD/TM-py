@@ -1,4 +1,4 @@
-#Tunneling Models Py (TM-py)
+# Tunneling Models Py (TM-py)
 TM-py aims to simplify fitting experimential J(V) or I(V) data to theoretical tunneling models, 
 comparing tunneling models with one another and evaluating different fit methods. 
 The python module lmfit is used to define tunneling models and perform fits. 
