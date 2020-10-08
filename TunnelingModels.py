@@ -15,7 +15,7 @@ import lmfit
 from scipy import constants
 
 import numpy as np
-from numpy import exp, sqrt
+from numpy import exp, sqrt, sinh
 
 #global definition of physical constants
 hbar = constants.hbar
@@ -24,11 +24,13 @@ m_e = constants.electron_mass
 e = constants.elementary_charge
 pi = constants.pi
 
-#todo: implement Gruverman Model
 
-def Simmons(v, area, alpha, phi, d, weight=1, beta=1):
+def Simmons(v, area, alpha, phi, d, weight=1, beta=1, J=False):
 
     d = d * 10 ** (-9)
+
+    if J:
+        area = 0
 
     J_0 = e / (2 * pi * h * (beta * d) ** 2)
     A = 4 * pi * beta * d * sqrt(2 * m_e) / h
@@ -48,37 +50,32 @@ class SimmonsModel(Model):
             self.set_param_hint('alpha', min=0.01)  # Enforce that beta is positive.
             self.set_param_hint('phi', min=0.01)  # Enforce that beta is positive
 
+def Gruverman(v, area, phi1, phi2, d, massfactor=1, weight=1, J=False):
+    if J:
+        area = 1
+    m = massfactor*m_e
+    C = 32 * pi * e * m / (9 * h ** 3)
+    phi_1 = phi1 * e
+    phi_2 = phi2 * e
+    alpha = 8*pi*d*10**(-9)*sqrt(2*m) / (3*h*phi_1+e*v-phi_2)
 
-def Simmons0K(v, area, alpha, phi, d, weight=1):
-    """Simmons Function. Calculates the tunneling current of a symmetric barrier at 0K.
-   :param v: Voltage. Dependent variable
-   :param A:
-   :param B:
-   :param phi: height of barrier in eV
-   :param alpha: ideality factor of effective electron mass. 0<= alpha <=1
-   :param d: barrier width
-   :param alpha: barrier height
+    a = area * C * exp(alpha*((phi_2-e*v/2)**(3/2)-(phi_1+e*v/2)**(3/2))) / (alpha**2*(sqrt(phi_2-e*v/2)-sqrt(phi_1+ev/2)))**2
+    b = sinh(3*e*v/4 * alpha((sqrt(phi_2-e*v/2)-sqrt(phi_1+ev/2))))
 
-   :rtype: float
-   """
-    A = 6.1657*10**10
-    B = 1.02463
-    return weight * area * A * ((phi - v / 2) / exp(d * B * sqrt(alpha * (phi - v / 2))) - (phi + v / 2) / exp(d * B * sqrt(alpha * (phi + v / 2)))) / (d ** 2)
+    I = a*b
 
-class Simmons0KModel(Model):
-    _doc__ = "SimmonsOkModel" + lmfit.models.COMMON_DOC
+    return I
+
+class GruvermanModel(Model):
+    _doc__ = "Gruverman" + lmfit.models.COMMON_DOC
 
     def __init__(self, *args, **kwargs):
         # pass in the defining equation
-        super().__init__(Simmons0K, *args, **kwargs)
-        self.set_param_hint('beta', min=0)  # Enforce that beta is positive.
+        super().__init__(Gruverman, *args, **kwargs)
 
-def Gruverman(v, area, alpha, phi, d, weight=1, beta=1):
 
-    return 1
 
 # Utility Functions
-
 
 def combineSameModel(A,B):
     if A.name == B.name:
