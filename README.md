@@ -1,9 +1,9 @@
 # Tunneling Models Py (TM-py)
-TM-py aims to simplify fitting experimential J(V) or I(V) data to theoretical tunneling models, 
+TM-py aims to simplify fitting experimental J(V) or I(V) data to theoretical tunneling models, 
 comparing tunneling models with one another and evaluating different fit methods. 
 The python module lmfit is used to define tunneling models and perform fits. 
 With this:
-- Multiple option for optimization functions are avaiable (see [here](https://lmfit.github.io/lmfit-py/fitting.html)) and can easily be combined (e.g. first a grid search, then Levenberg-Marquardt)
+- Multiple option for optimization functions are available (see [here](https://lmfit.github.io/lmfit-py/fitting.html)) and can easily be combined (e.g. first a grid search, then Levenberg-Marquardt)
 - models can be combined to compound models (esp. interesting for ensemble molecular junctions with parameters varying over junction area)
 
 

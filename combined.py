@@ -2,16 +2,12 @@ from TunnelingModels import *
 import matplotlib.pyplot as plt
 import numpy as np
 
+SimmonsBarrier = SimmonsModel()
+SimmonsBarrier2 = SimmonsModel()
+SimmonsBarrier3 = SimmonsModel()
+SimmonsBarrier4 = SimmonsModel()
 
-
-SimmonsBarrier = SimmonsOKModel()
-SimmonsBarrier2 = SimmonsOKModel()
-SimmonsBarrier3 = SimmonsOKModel()
-SimmonsBarrier4 = SimmonsOKModel()
-
-
-
-for w in np.arange(0.1,0.9,0.1):
+for w in np.arange(0.1, 0.9, 0.1):
     true_params = SimmonsBarrier.make_params(area=1, d=1.2, alpha=0.8, phi=1, weight=w)
     true_params2 = SimmonsBarrier2.make_params(area=1, d=1.2, alpha=0.8, phi=3, weight=1-w)
 
@@ -24,20 +20,14 @@ for w in np.arange(0.1,0.9,0.1):
     true3 = SimmonsBarrier3.eval(params=true_params3, v=v)
     true4 = SimmonsBarrier4.eval(params=true_params4, v=v)
 
-
-
-combined = combineSameModel(SimmonsBarrier, SimmonsBarrier2)
+combined = combine_same_model(SimmonsBarrier, SimmonsBarrier2)
 combinedparams = true_params+true_params2
 truecombined = combined.eval(params=combinedparams, v=v)
 
-
-
 plt.figure()
-plt.plot(v, np.absolute(true2),v, np.absolute(true3), v, np.absolute(truecombined))
+plt.plot(v, np.absolute(true2), v, np.absolute(true3), v, np.absolute(truecombined))
 
 plt.ylabel('I(A)')
 plt.xlabel('V(V)')
 plt.title('simulated measurement')
 plt.show()
-
-#todo: write a function that takes two arbitrary model objects and gives the weighted result --> longterm: more than two to simulate a barrier distribution
