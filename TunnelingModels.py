@@ -17,6 +17,9 @@ e = constants.elementary_charge
 pi = constants.pi
 
 
+# todo: Models: Landauer coherent model, tyler expansion, multi-barrier model, tsu esaki, BDR, distribution over area, ..
+# todo: add DOIs of references to the models
+
 def simmons(v, area, alpha, phi, d, weight=1, beta=1, J=0, absolute=1):
 
     d = d * 10 ** (-9)
@@ -34,7 +37,6 @@ def simmons(v, area, alpha, phi, d, weight=1, beta=1, J=0, absolute=1):
 
     return I
 
-
 class SimmonsModel(Model):
     _doc__ = "Simmons Model" + lmfit.models.COMMON_DOC
 
@@ -47,6 +49,20 @@ class SimmonsModel(Model):
 
 
 def gruverman(v, area, phi1, phi2, phi_diff, d, massfactor=1, weight=1, J=False, absolute=True):
+    """
+
+    :param v:
+    :param area:
+    :param phi1:
+    :param phi2:
+    :param phi_diff:
+    :param d:
+    :param massfactor:
+    :param weight:
+    :param J:
+    :param absolute:
+    :return:
+    """
     if J:
         area = 1
     #todo: think about constraints and implement them in model
@@ -67,13 +83,46 @@ def gruverman(v, area, phi1, phi2, phi_diff, d, massfactor=1, weight=1, J=False,
 
     return I
 
-
 class GruvermanModel(Model):
     _doc__ = "Gruverman" + lmfit.models.COMMON_DOC
 
     def __init__(self, *args, **kwargs):
         # pass in the defining equation
         super().__init__(gruverman, *args, **kwargs)
+
+
+def bdr(v, area, phi_avg, phi_interfacial, d, J=0, absolute=1, massfactor=1):
+    """
+    Expanded BDR model from Miller 2009 [DOI: 10.1063/1.3122600]
+    Model valid for biases less than one-third of the barrier height. both phi are in Volts
+    :param v:
+    :param area: area of the junction
+    :param phi_avg: average barrier height
+    :param phi_interfacial: interfacial barrier height difference
+    :param d: thickness in nm
+    :param J:
+    :param absolute:
+    :return:
+    """
+    d = d * 10**(-9)
+    G_0 = (e / h)**2 * sqrt(2 * massfactor * m_e * e * phi_avg / (d)**2 ) * exp( -2*d / hbar * sqrt(2 * massfactor * m_e * e * phi_avg ))
+    if J:
+        area = 1
+    # todo: check whetether gelta phi has to be under the sqrt
+    I = area * G_0 * ( V + s * sqrt( 2 * massfactor * m_e / e) * phi_interfacial * voltage**2 / ( 24 * hbar * phi_avg**(3/2))) + ( d**2 * massfactor * m_e * e * voltage**3 ) / ( 12 * hbar**2 * phi_avg ) )
+
+    if abs:
+        I = abs(I)
+
+    return I
+
+class BDRModel(Model):
+    _doc__ = "BDR" + lmfit.models.COMMON_DOC
+
+    def __init__(self, *args, **kwargs):
+        # pass in the defining equation
+        super().__init__(bdr, *args, **kwargs)
+
 
 # Utility Functions
 
@@ -90,7 +139,7 @@ def data_from_csv(filename, sep, current_start_column, min_voltage, max_voltage,
     :param current_start_column: first column in which current data is stored
     :param min_voltage: minimum voltage (absolute) to evaluate
     :param comments: character that signals a comment line in the csv file
-    :return: volatage, currents
+    :return: voltage, currents
     """
     dataFromFile = pd.read_csv(filename, sep=sep, comment=comments)
     dataFromFile = dataFromFile.dropna()
@@ -267,3 +316,20 @@ def fit_param_to_df(list_of_results):
     df = pd.DataFrame(dict_list)
 
     return df
+
+
+def calc_TVS(current, voltage, alpha=2):
+    """
+    Calculates the transition voltage spectroscopy spectrum from I-V data
+    :param current:
+    :param voltage:
+    :param alpha:
+    :return: spectrum
+    """
+    x = 1 / voltage
+    ln = np.log(current / ( voltage ** alpha) )
+
+    return x, ln
+
+# todo: calc_NDC
+
