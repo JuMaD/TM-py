@@ -8,6 +8,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import copy
+import re
 
 # global definition of physical constants
 hbar = constants.hbar
@@ -320,7 +321,7 @@ def fit_param_to_df(list_of_results):
 
     return df
 
-def eval_from_df(v, df, model):
+def eval_from_df(v, df, model, label_params):
     """
     Evaluates the model d with parameter sets that are given in df and plots the result
     :param v:
@@ -340,10 +341,17 @@ def eval_from_df(v, df, model):
         results.append(result)
 
     for i in range(len(results)):
-        plt.plot(v, results[i], label=f'id {i}')
+        labels = {}
+        for label in label_params:
+            labels[label] = np.round(df.at[i,label],2)
+
+
+
+        plt.semilogy(v, results[i], label=re.sub(':',' =',re.sub('[{}\']', '', str(labels))))
     plt.legend()
     plt.show()
     return results
+
 
 def calc_TVS(current, voltage, alpha=2):
     """
