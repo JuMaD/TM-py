@@ -49,7 +49,7 @@ class SimmonsModel(Model):
         self.set_param_hint('phi', min=0.01)  # Enforce that beta is positive
 
 
-def gruverman(v, area, phi1, phi2, phi_diff, d, massfactor=1, weight=1, J=False, absolute=True):
+def gruverman(v, area, phi1, phi2, d, massfactor=1, weight=1, J=0, absolute=1):
     """
 
     :param v:
@@ -69,14 +69,16 @@ def gruverman(v, area, phi1, phi2, phi_diff, d, massfactor=1, weight=1, J=False,
         area = 1
     #todo: think about constraints and implement them in model
     m = massfactor*m_e
-    C = 32 * pi * e * m / (9 * h ** 3)
+    C = - 32 * pi * e * m / (9 * h ** 3)
     phi_1 = phi1 * e
     phi_2 = phi2 * e
     alpha = 8 * pi * d * 10**(-9) * sqrt(2 * m) / (3 * h * (phi_1 + e * v - phi_2))
 
-    a = area * C * exp(alpha * ((phi_2 - e * v / 2)**(3/2) - (phi_1 + e * v / 2)**(3/2))) / \
-        (alpha**2 * (sqrt(phi_2 - e * v / 2) - sqrt(phi_1 + e * v / 2)))**2
-    b = sinh(3 * e * v / 4 * alpha * ((sqrt(phi_2 - e * v / 2) - sqrt(phi_1 + e * v / 2))))
+    arg_1 = phi_1+(e*v)/2
+    arg_2 = phi_2 - (e*v)/2
+    a = area * C * exp(alpha * (arg_2**1.5-arg_1**1.5)) / (alpha**2 * (sqrt(arg_2)-sqrt(arg_1))**2)
+    b = sinh(3*e*v / 4 * alpha * (sqrt(arg_2)-sqrt(arg_1)))
+
 
     I = weight * a * b
 
@@ -111,7 +113,7 @@ def bdr(v, area, phi_avg, phi_interfacial, d, J=0, absolute=1, massfactor=1):
     if J:
         area = 1
     # todo: check whetether gelta phi has to be under the sqrt
-    I = area * G_0 * ( V + s * sqrt( 2 * massfactor * m_e / e) * phi_interfacial * voltage**2 / ( 24 * hbar * phi_avg**(3/2))) + ( d**2 * massfactor * m_e * e * voltage**3 ) / ( 12 * hbar**2 * phi_avg ) )
+    I = area * G_0 * ( V + s * sqrt( 2 * massfactor * m_e / e) * phi_interfacial * voltage**2 / ( 24 * hbar * phi_avg**(3/2))) + ( d**2 * massfactor * m_e * e * voltage**3 ) / ( 12 * hbar**2 * phi_avg )
 
     if abs:
         I = abs(I)

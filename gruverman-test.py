@@ -5,7 +5,7 @@ from lmfit import Parameter
 
 
 # get data from file
-voltage, currents = data_from_csv('testdata.csv', sep='\t', min_voltage=0.01, max_voltage=0.51, current_start_column=1,
+voltage, currents = data_from_csv('testdata.csv', sep='\t', min_voltage=0.01, max_voltage=1, current_start_column=1,
                                   voltage_column=0)
 current = currents[1]
 
@@ -14,22 +14,6 @@ GruvermanBarrier = GruvermanModel()
 
 # create a parameter object for a gruverman model that exists outside the fit function.
 # Advantage: can be passed to functions and can be more easily modified by a GUI
-
-
-eval_params = lmfit.Parameters()
-eval_params.add('area', value=2.25e-10)
-eval_params.add('phi1', value=1)
-eval_params.add('phi2', value=2)
-eval_params.add('d', value=1)
-eval_params.add('massfactor', value=1)
-eval_params.add('weight', value=1)
-eval_params.add('absolute', value=1)
-eval_params.add('J', value=0)
-
-
-g_eval = GruvermanBarrier.eval(params=eval_params, v=voltage)
-
-
 
 
 
@@ -47,8 +31,10 @@ gruverman_brute, gruverman_trials, gruverman_fit = brute_then_local(GruvermanBar
 
 print(fit_param_to_df(gruverman_trials))
 
+
+
 plt.figure()
-plt.plot(voltage, np.abs(g_eval), 'go', label='eval')
+
 plt.plot(voltage, np.abs(gruverman_fit.best_fit), 'bo', label=f'Brute->local')
 plt.plot(voltage, current, 'ro', label='data')
 plt.legend(loc='best')
