@@ -37,6 +37,7 @@ def simmons(v, area, alpha, phi, d, weight=1, beta=1, J=0, absolute=1):
 
     return I
 
+
 class SimmonsModel(Model):
     _doc__ = "Simmons Model" + lmfit.models.COMMON_DOC
 
@@ -63,6 +64,7 @@ def gruverman(v, area, phi1, phi2, phi_diff, d, massfactor=1, weight=1, J=False,
     :param absolute:
     :return:
     """
+
     if J:
         area = 1
     #todo: think about constraints and implement them in model
