@@ -17,7 +17,7 @@ e = constants.elementary_charge
 pi = constants.pi
 
 
-# todo: Models: Landauer coherent model, tyler expansion, multi-barrier model, tsu esaki, BDR, distribution over area, ..
+# todo: Models: tyler expansion, multi-barrier model, tsu esaki, distribution over area, ..
 # todo: add DOIs of references to the models
 
 def simmons(v, area, alpha, phi, d, weight=1, beta=1, J=0, absolute=1):
@@ -36,7 +36,6 @@ def simmons(v, area, alpha, phi, d, weight=1, beta=1, J=0, absolute=1):
         I = abs(I)
 
     return I
-
 
 class SimmonsModel(Model):
     _doc__ = "Simmons Model" + lmfit.models.COMMON_DOC
@@ -321,6 +320,30 @@ def fit_param_to_df(list_of_results):
 
     return df
 
+def eval_from_df(v, df, model):
+    """
+    Evaluates the model d with parameter sets that are given in df and plots the result
+    :param v:
+    :param df:
+    :param model:
+    :return:
+    """
+
+
+    names = model.param_names
+    results = []
+    for i in range(0,df.shape[0]):
+        params = lmfit.Parameters()
+        for name in names:
+            params.add(name, value=df.at[i, name])
+        result = model.eval(v=v, params=params)
+        results.append(result)
+
+    for i in range(len(results)):
+        plt.plot(v, results[i], label=f'id {i}')
+    plt.legend()
+    plt.show()
+    return results
 
 def calc_TVS(current, voltage, alpha=2):
     """

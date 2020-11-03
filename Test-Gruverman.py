@@ -29,9 +29,6 @@ gruverman_params.add('J', value=0, vary=False)
 
 gruverman_brute, gruverman_trials, gruverman_fit = brute_then_local(GruvermanBarrier, current, voltage, 50,'cobyla', gruverman_params)
 
-print(fit_param_to_df(gruverman_trials))
-
-
 
 plt.figure()
 

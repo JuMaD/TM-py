@@ -22,7 +22,7 @@ DOI:
 Description of Gruverman Model
 DOI:
 
-## Brinkman, Dynes Rowell (BDR)
+## Brinkman, Dynes and Rowell (BDR)
 Description of the BDR Model
 DOI:
 
