@@ -17,7 +17,6 @@ m_e = constants.electron_mass
 e = constants.elementary_charge
 pi = constants.pi
 
-
 # todo: Models: tyler expansion, multi-barrier model, tsu esaki, distribution over area, ..
 # todo: add DOIs of references to the models
 
@@ -74,10 +73,10 @@ def gruverman(v, area, phi1, phi2, d, massfactor=1, weight=1, J=0, absolute=1):
     phi_2 = phi2 * e
     alpha = 8 * pi * d * 10**(-9) * sqrt(2 * m) / (3 * h * (phi_1 + e * v - phi_2))
 
-    arg_1 = phi_1+(e*v)/2
+    arg_1 = phi_1 + (e*v)/2
     arg_2 = phi_2 - (e*v)/2
-    a = area * C * exp(alpha * (arg_2**1.5-arg_1**1.5)) / (alpha**2 * (sqrt(arg_2)-sqrt(arg_1))**2)
-    b = sinh(3*e*v / 4 * alpha * (sqrt(arg_2)-sqrt(arg_1)))
+    a = area * C * exp(alpha * (arg_2**1.5-arg_1**1.5)) / (alpha**2 * (sqrt(arg_2) - sqrt(arg_1))**2)
+    b = sinh(3*e*v / 4 * alpha * (sqrt(arg_2) - sqrt(arg_1)))
 
 
     I = weight * a * b
@@ -113,7 +112,7 @@ def bdr(v, area, phi_avg, phi_interfacial, d, J=0, absolute=1, massfactor=1):
     if J:
         area = 1
     # todo: check whetether gelta phi has to be under the sqrt
-    I = area * G_0 * ( V + s * sqrt( 2 * massfactor * m_e / e) * phi_interfacial * voltage**2 / ( 24 * hbar * phi_avg**(3/2))) + ( d**2 * massfactor * m_e * e * voltage**3 ) / ( 12 * hbar**2 * phi_avg )
+    I = area * G_0 * ( v + d * sqrt( 2 * massfactor * m_e / e) * phi_interfacial * v**2 / ( 24 * hbar * phi_avg**(3/2))) + ( d**2 * massfactor * m_e * e * v**3 ) / ( 12 * hbar**2 * phi_avg )
 
     if abs:
         I = abs(I)
@@ -129,7 +128,6 @@ class BDRModel(Model):
 
 
 # Utility Functions
-
 
 def data_from_csv(filename, sep, current_start_column, min_voltage, max_voltage, voltage_column=0, comments='#'):
     """
@@ -292,6 +290,7 @@ def brute_then_local(model, current, voltage, n_solutions, local_method, paramet
         if trial.chisqr < best_result.chisqr:
             best_result = trial
 
+
     return result_brute, trials, best_result
 
 
@@ -321,7 +320,7 @@ def fit_param_to_df(list_of_results):
 
     return df
 
-def eval_from_df(v, df, model, label_params):
+def eval_from_df(v, df, model, label_params, semilogy):
     """
     Evaluates the model d with parameter sets that are given in df and plots the result
     :param v:
@@ -343,11 +342,13 @@ def eval_from_df(v, df, model, label_params):
     for i in range(len(results)):
         labels = {}
         for label in label_params:
-            labels[label] = np.round(df.at[i,label],2)
+            labels[label] = np.round(df.at[i,label],6)
 
 
-
-        plt.semilogy(v, results[i], label=re.sub(':',' =',re.sub('[{}\']', '', str(labels))))
+        if semilogy:
+            plt.semilogy(v, results[i], label=re.sub(':',' =',re.sub('[{}\']', '', str(labels))))
+        else:
+            plt.plot(v, results[i], label=re.sub(':',' =',re.sub('[{}\']', '', str(labels))))
     plt.legend()
     plt.show()
     return results
