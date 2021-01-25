@@ -2,32 +2,43 @@ from TunnelingModels import *
 import matplotlib.pyplot as plt
 import numpy as np
 
-SimmonsBarrier = SimmonsModel()
-SimmonsBarrier2 = SimmonsModel()
-SimmonsBarrier3 = SimmonsModel()
-SimmonsBarrier4 = SimmonsModel()
 
-for w in np.arange(0.1, 0.9, 0.1):
-    true_params = SimmonsBarrier.make_params(area=1, d=1.2, alpha=0.8, phi=1, weight=w)
-    true_params2 = SimmonsBarrier2.make_params(area=1, d=1.2, alpha=0.8, phi=3, weight=1-w)
+#todo: iterate over a list of list of dicts --> multiple combined models
+#todo: think about the difference between evaluating and fitting here :) --> turn dict into Parameters objects??
 
-    true_params3 = SimmonsBarrier.make_params(area=1, d=1.2, alpha=0.8, phi=1, weight=1)
-    true_params4 = SimmonsBarrier.make_params(area=1, d=1.2, alpha=0.8, phi=3, weight=1)
+model_name = "simmons"
+a = 0.2
+dict1 = {"area":1, "alpha":1, "phi":1, "d":1, "weight":a, "beta":1, "J":0, "absolute":1}
+dict2 = {"area":1, "alpha":1, "phi":1.2, "d":1, "weight":1-a, "beta":1, "J":0, "absolute":1}
 
-    v = np.linspace(-0.1, 0.1, 100)
-    true = SimmonsBarrier.eval(params=true_params, v=v)
-    true2 = SimmonsBarrier2.eval(params=true_params2, v=v)
-    true3 = SimmonsBarrier3.eval(params=true_params3, v=v)
-    true4 = SimmonsBarrier4.eval(params=true_params4, v=v)
 
-combined = combine_same_model(SimmonsBarrier, SimmonsBarrier2)
-combinedparams = true_params+true_params2
-truecombined = combined.eval(params=combinedparams, v=v)
+list_of_param_dicts = [dict1, dict2]
+no_fcns = len(list_of_param_dicts)
+list_of_models = []
+list_of_param_names = []
+list_of_param_values = []
 
-plt.figure()
-plt.plot(v, np.absolute(true2), v, np.absolute(true3), v, np.absolute(truecombined))
+for i in range(1, no_fcns+1):
+    model_i = Model(eval(model_name), prefix=f'f{i}_')
+    # print(model_i.name)
+    list_of_models.append(model_i)
+    for param in list_of_param_dicts[i-1]:
+        list_of_param_names.append(f'f{i}_{param}')
+        list_of_param_values.append(list_of_param_dicts[i-1][param])
 
-plt.ylabel('I(A)')
-plt.xlabel('V(V)')
-plt.title('simulated measurement')
-plt.show()
+combined = None
+for model in list_of_models:
+    if combined == None:
+        combined = model
+    else:
+        combined = combined + model
+
+# make several list_of_param_values here
+data = [list_of_param_values]
+df = pd.DataFrame(data, columns = list_of_param_names)
+v = np.linspace(-1.0, 1.0, 50)
+
+#parameterize what is used in legend
+result = eval_from_df(v, df, combined, ["f1_phi","f2_phi"], semilogy=True)
+
+print(result)

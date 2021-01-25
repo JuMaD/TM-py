@@ -13,7 +13,7 @@ current = currents[1]
 SimmonsBarrier = SimmonsModel()
 
 # create a parameter object for a simmons model that exists outside the fit function.
-# Advantage: can be passed to functions and can be more easily modified by a GUI
+# Advantage: can be passed to functions
 
 simmons_params = lmfit.Parameters()
 simmons_params.add('area', value=2.25e-10, vary=False)

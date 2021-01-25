@@ -320,12 +320,13 @@ def fit_param_to_df(list_of_results):
 
     return df
 
-def eval_from_df(v, df, model, label_params, semilogy):
+def eval_from_df(v, df, model, label_params, semilogy, plot=True):
     """
     Evaluates the model d with parameter sets that are given in df and plots the result
     :param v:
     :param df:
     :param model:
+    :param plot:
     :return:
     """
 
@@ -338,25 +339,26 @@ def eval_from_df(v, df, model, label_params, semilogy):
             params.add(name, value=df.at[i, name])
         result = model.eval(v=v, params=params)
         results.append(result)
+    if plot:
+        for i in range(len(results)):
+            labels = {}
+            for label in label_params:
+                labels[label] = np.round(df.at[i,label],6)
 
-    for i in range(len(results)):
-        labels = {}
-        for label in label_params:
-            labels[label] = np.round(df.at[i,label],6)
 
+            if semilogy:
+                plt.semilogy(v, results[i], label=re.sub(':',' =',re.sub('[{}\']', '', str(labels))))
+            else:
+                plt.plot(v, results[i], label=re.sub(':',' =',re.sub('[{}\']', '', str(labels))))
+        plt.legend()
+        plt.show()
 
-        if semilogy:
-            plt.semilogy(v, results[i], label=re.sub(':',' =',re.sub('[{}\']', '', str(labels))))
-        else:
-            plt.plot(v, results[i], label=re.sub(':',' =',re.sub('[{}\']', '', str(labels))))
-    plt.legend()
-    plt.show()
     return results
 
 
-def calc_TVS(current, voltage, alpha=2):
+def calc_tvs(current, voltage, alpha=2):
     """
-    Calculates the transition voltage spectroscopy spectrum from I-V data
+    Calculates the transition voltage spectroscopy spectrum from I-V data (Fowler Nordheim Plot)
     :param current:
     :param voltage:
     :param alpha:
@@ -367,5 +369,5 @@ def calc_TVS(current, voltage, alpha=2):
 
     return x, ln
 
-# todo: calc_NDC
+
 

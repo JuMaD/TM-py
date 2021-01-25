@@ -12,7 +12,8 @@ In the long term there should be a GUI and data analysis techniques such as nois
 A more comprehensive documentation will follow as this project grows.
 
 # Utility functions
-
+## brute then local
+## fn-analysis
 # Models
 ## Simmons
 Description of Simmons Model
