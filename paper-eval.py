@@ -31,8 +31,8 @@ anti_electron_barrier = -(anti_lumo-syn_fermi)
 syn_hole_barrier = -(syn_fermi - syn_homo)
 anti_hole_barrier = -(anti_fermi - anti_homo)
 
-alox_CB = 0.79
-alox_VB = 6.76
+alox_CB = 2
+alox_VB = 5.2
 al_wf = 4.3
 
 print("=== Barriers ===")
@@ -75,7 +75,7 @@ model_id = "VB-plus-minus_5nm"
         plt.savefig(f"graphs/{model_id}_delta1_{poisson_delta1}.png")
         plt.close() """
 
-data = []
+
 
 #per molecule calculation -- peer
 #poisson_delta1 = 0.008
@@ -87,22 +87,38 @@ data = []
 
 #1V calculation, symmetric?
 # This model assumes an "effective barrier height" and "effective barrierwidth" that combines alox +
-poisson_delta1 = 0.0389
+poisson_delta1 = 0.0389 #get poisson delta at 1.6V for this!
 poisson_delta2 = -0.0895
 
 
 
 
 data = []
-data.append([1, alox_VB-al_wf, syn_hole_barrier-poisson_delta2*2, 7.8, 1, 1, 0, 1])
-data.append([1, alox_VB-al_wf, anti_hole_barrier-poisson_delta1*2, 7.8, 1, 1, 0, 1])
+massfactors = []
+ratios = []
 
-df = pd.DataFrame(data, columns = param_names)
-v = np.linspace(-max_voltage, max_voltage, 200)
-Gruverman = GruvermanModel()
-gruverman_d= eval_from_df(v, df, Gruverman, ["phi1","phi2"], semilogy=True, plot=False)
+for massfactor in range(1,11):
+    data = []
+    data.append([1, alox_VB-al_wf, syn_hole_barrier-poisson_delta2*1.6, 7.8, massfactor/10, 1, 0, 1]) #there was a *2 in poisson_delta2 - why? # check thickness too :)
+    data.append([1, alox_VB-al_wf, anti_hole_barrier-poisson_delta1*1.6, 7.8, massfactor/10, 1, 0, 1]) #there was a *2 in poisson_delta2 - why? Steigung der Extrapolation?
+    massfactors.append(massfactor/10)
+    df = pd.DataFrame(data, columns = param_names)
+    v = np.linspace(-max_voltage, max_voltage, 200)
+    Gruverman = GruvermanModel()
+    gruverman_d= eval_from_df(v, df, Gruverman, ["phi1","phi2"], semilogy=True, plot=False)
 
-ratio = gruverman_d[1]/gruverman_d[0]
+    ratio = gruverman_d[1]/gruverman_d[0]
+    ratios.append(ratio[199])
+    #print(f"{massfactor/10}, {ratio[199]}")
+# -->Invariant to Massfactor?
+
+df = pd.DataFrame()
+df['massfactor'] = massfactors
+df['ratio'] = ratios
+print(df)
+#data_tuples = list(zip(v,ratio))
+#ratios = pd.DataFrame(data_tuples)
+#print(ratios)
 plt.plot(v, ratio)
 plt.semilogy()
 plt.show()
