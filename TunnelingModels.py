@@ -13,8 +13,8 @@ import re
 # global definition of physical constants
 hbar = constants.hbar
 h = constants.h
-m_e = constants.electron_mass
-e = constants.elementary_charge
+m_e = constants.electron_mass # 9.1093837015e-31 kg
+e = constants.elementary_charge # 1.602176634e-19 C
 pi = constants.pi
 
 # todo: Models: tyler expansion, multi-barrier model, tsu esaki, distribution over area, ..
@@ -68,11 +68,14 @@ def gruverman(v, area, phi1, phi2, d, massfactor=1, weight=1, J=0, absolute=1):
         area = 1
     #todo: think about constraints and implement them in model
     m = massfactor*m_e
+
+
     C = - 32 * pi * e * m / (9 * h ** 3)
     phi_1 = phi1 * e
     phi_2 = phi2 * e
     alpha = 8 * pi * d * 10**(-9) * sqrt(2 * m) / (3 * h * (phi_1 + e * v - phi_2))
-
+    print(f"alpha(-1V) = \t\t{alpha[0]}")
+    print(f"alpha(1V) = \t\t{alpha[200]}")
     arg_1 = phi_1 + (e*v)/2
     arg_2 = phi_2 - (e*v)/2
     a = area * C * exp(alpha * (arg_2**1.5-arg_1**1.5)) / (alpha**2 * (sqrt(arg_2) - sqrt(arg_1))**2)
