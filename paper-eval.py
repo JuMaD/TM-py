@@ -7,7 +7,7 @@ from lmfit import Parameter
 
 param_names = ['area', 'phi1', 'phi2', 'd',  'massfactor', 'weight', 'J', 'absolute']
 
-#Simulation Window
+#Simulation Window (symmetric wrt 0)
 max_voltage = 1
 
 #Energy Levels
@@ -157,15 +157,3 @@ print(df.loc[[0, max_voltage*200], :])
 
 
 
-# --------------- dump
-#per molecule calculation -- peer
-#poisson_delta1 = 0.008
-#poisson_delta2 = -0.276
-
-#10V calculation --> Falk
-#poisson_delta1 = 0.273
-#poisson_delta2 = -0.934
-
-# ~3% current difference
-#poisson_delta1 = 0.009/2
-#poisson_delta2 = 0.252/2
