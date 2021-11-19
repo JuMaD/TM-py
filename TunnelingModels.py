@@ -74,8 +74,8 @@ def gruverman(v, area, phi1, phi2, d, massfactor=1, weight=1, J=0, absolute=1):
     phi_1 = phi1 * e
     phi_2 = phi2 * e
     alpha = 8 * pi * d * 10**(-9) * sqrt(2 * m) / (3 * h * (phi_1 + e * v - phi_2))
-    print(f"alpha(-1V) = \t\t{alpha[0]}")
-    print(f"alpha(1V) = \t\t{alpha[200]}")
+    #print(f"alpha(-1V) = \t\t{alpha[0]}")
+    #print(f"alpha(1V) = \t\t{alpha[200]}")
     arg_1 = phi_1 + (e*v)/2
     arg_2 = phi_2 - (e*v)/2
     a = area * C * exp(alpha * (arg_2**1.5-arg_1**1.5)) / (alpha**2 * (sqrt(arg_2) - sqrt(arg_1))**2)
@@ -86,7 +86,7 @@ def gruverman(v, area, phi1, phi2, d, massfactor=1, weight=1, J=0, absolute=1):
 
     if absolute:
         I = abs(I)
-
+    print("Gruverman evaluated")
     return I
 
 class GruvermanModel(Model):
@@ -114,7 +114,6 @@ def bdr(v, area, phi_avg, phi_interfacial, d, J=0, absolute=1, massfactor=1):
     G_0 = (e / h)**2 * sqrt(2 * massfactor * m_e * e * phi_avg / (d)**2 ) * exp( -2*d / hbar * sqrt(2 * massfactor * m_e * e * phi_avg ))
     if J:
         area = 1
-    # todo: check whetether gelta phi has to be under the sqrt
     I = area * G_0 * ( v + d * sqrt( 2 * massfactor * m_e / e) * phi_interfacial * v**2 / ( 24 * hbar * phi_avg**(3/2))) + ( d**2 * massfactor * m_e * e * v**3 ) / ( 12 * hbar**2 * phi_avg )
 
     if abs:
@@ -284,7 +283,7 @@ def brute_then_local(model, current, voltage, n_solutions, local_method, paramet
 
     result_brute = model.fit(current, v=voltage, params=parameters, method='brute', keep=n_solutions)
     best_result = copy.deepcopy(result_brute)
-
+    print("Brute Finished")
     trials = []
 
     for candidate in result_brute.candidates:

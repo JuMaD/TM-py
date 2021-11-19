@@ -47,7 +47,7 @@ d_SAM = 2.81#2.81
 epsilon_Alox = 9
 d_Alox = 3
 
-surface_density = 3.1 * 10**18
+surface_density = 3.6*10**18#3.1 * 10**18
 
 
 #################################
@@ -81,7 +81,7 @@ print(f'alox_VB=\t\t\t{alox_VB} eV')
 # Calculation of field applied to SAM wit given V_max
 #E_SAM = epsilon_Alox / (epsilon_Alox * d_SAM + epsilon_SAM * d_Alox) * V_max
 E_SAM = V_max  * ( ( ( epsilon_Alox ) / (epsilon_SAM*d_Alox + epsilon_Alox*d_SAM) ) )
-#E_SAM = 2.5
+#E_SAM = 1
 print("")
 print("=== Field across SAM ===")
 print(f"E_SAM = \t\t\t{E_SAM} V/nm")
