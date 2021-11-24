@@ -3,9 +3,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from lmfit import Parameter, fit_report
 
+root = tk.Tk()
+root.withdraw()
+filename = filedialog.askopenfilename(initialdir = sys.path[0])
 
 # get data from file
-voltage, currents = data_from_csv('testdata.csv', sep='\t', min_voltage=0.01, max_voltage=0.51, current_start_column=1,
+voltage, currents = data_from_csv(f'{filename}', sep='\t', min_voltage=0.01, max_voltage=0.51, current_start_column=1,
                                   voltage_column=0)
 
 # create a parameter object for a simmons model that exists outside the fit function.

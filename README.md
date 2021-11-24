@@ -8,11 +8,17 @@ With this:
 
 In the long term there should be a GUI and data analysis techniques such as noise analysis and [outlier detection](https://lmfit.github.io/lmfit-py/examples/example_detect_outliers.html#sphx-glr-examples-example-detect-outliers-py) should be featured
 Models and utility functions are implemented in TunnelingModels.py
+
 FitGruverman.py and FitSimmons.py showcase fitting experimental data to the Gruverman or the Simmons model, using a grid search and then local optimization on the 50 best results. The following output files are generated:
 - [modelname]-fitresult_{i}.png: Best fit result of the i-th column in the provided data plotted together with the data
 - [modelname]-fitresult_{i}.csv: csv with data and best fit result at the evaluated voltages
 - [modelname]-best_trials_{i}csv: Parameter sets of the best trials (so the user can check whether 'more physical' combinations may yield reasonable fits as well)
 
+FitBDR.py is similar to those, but with a much simpler interface.
+
+evaluator.py showcases the usage of the evaluation function to simulate tunneling current from given parameters and a given model.
+
+papereval.py was a practical implementation to calculate on/off ratios of memristive devices where the switching was caused by a shift in tunneling barrier height on one side.
 # Utility functions
 ## brute then local
 ## fn-analysis

@@ -12,9 +12,8 @@ current = currents[1]
 #instantiate Model
 BDRBarrier = BDRModel()
 
-# create a parameter object for a gruverman model that exists outside the fit function.
+# create a parameter object for a BDR model that exists outside the fit function.
 # Advantage: can be passed to functions and can be more easily modified by a GUI
-
 
 
 BDR_params = lmfit.Parameters()
