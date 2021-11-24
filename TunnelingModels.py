@@ -17,9 +17,6 @@ m_e = constants.electron_mass # 9.1093837015e-31 kg
 e = constants.elementary_charge # 1.602176634e-19 C
 pi = constants.pi
 
-# todo: Models: tyler expansion, multi-barrier model, tsu esaki, distribution over area, ..
-# todo: add DOIs of references to the models
-
 def simmons(v, area, alpha, phi, d, weight=1, beta=1, J=0, absolute=1):
 
     d = d * 10 ** (-9)
@@ -86,7 +83,6 @@ def gruverman(v, area, phi1, phi2, d, massfactor=1, weight=1, J=0, absolute=1):
 
     if absolute:
         I = abs(I)
-    print("Gruverman evaluated")
     return I
 
 class GruvermanModel(Model):
@@ -356,7 +352,6 @@ def eval_from_df(v, df, model, label_params, semilogy, plot=True):
         plt.show()
 
     return results
-
 
 def calc_tvs(current, voltage, alpha=2):
     """
