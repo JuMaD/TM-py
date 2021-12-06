@@ -133,7 +133,7 @@ def data_from_csv(filename, sep, current_start_column, min_voltage, max_voltage,
     the currents as array of np arrays. Lines that start with the "comments" character are ignored,
     the first line is assumed to be the column name and is also disregarded.
     :param max_voltage:  maximum voltage to evaluate
-    :param filename: name and location of the file where the data is stored
+    :param filename: name and location of the file where the data is stored. Either a string or os.PathLike
     :param sep: csv seperator
     :param voltage_column: column number in which the voltage data is stored (first column: 0)
     :param current_start_column: first column in which current data is stored
@@ -156,6 +156,21 @@ def data_from_csv(filename, sep, current_start_column, min_voltage, max_voltage,
     currents = []
     [currents.append(dataFromFile.iloc[:, n].values) for n in range(current_start_column, len(dataFromFile.columns))]
     return voltage, currents
+
+def result_to_csv(df, datapath, suffix):
+    """
+    Saves the data frame to the specified path
+    :param df:          Dataframe to be saved
+    :param datapath:    relative path to save location
+    :param suffix:      File suffix = name after datapath
+    :return:            true for successful save
+    """
+    # generate filename to save to
+    file_dir = os.path.join(os.path.dirname(datapath), 'Fits')
+    filepath = os.path.join(file_dir, os.path.splitext(os.path.basename(datapath))[0])
+    savepath = filepath + suffix + '.csv'
+
+    df.to_csv(savepath, sep='\t')
 
 def plot_results_brute(result, best_vals=True, varlabels=None,
                        output=None):
