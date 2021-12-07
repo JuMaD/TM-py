@@ -10,9 +10,10 @@ In the long term there should be a GUI and data analysis techniques such as nois
 Models and utility functions are implemented in TunnelingModels.py
 
 FitGruverman.py and FitSimmons.py showcase fitting experimental data to the Gruverman or the Simmons model, using a grid search and then local optimization on the 50 best results. The following output files are generated:
-- [modelname]-fitresult_{i}.png: Best fit result of the i-th column in the provided data plotted together with the data
-- [modelname]-fitresult_{i}.csv: csv with data and best fit result at the evaluated voltages
-- [modelname]-best_trials_{i}csv: Parameter sets of the best trials (so the user can check whether 'more physical' combinations may yield reasonable fits as well)
+- [filename]-[modelname]-fitresult_{i}.png: Best fit result of the i-th column in the provided data plotted together with the data
+- [filename]-[modelname]-fitresult_{i}.csv: csv with data and best fit result at the evaluated voltages
+- [filename]-[modelname]-best_trials_{i}.csv: Parameter sets of the best trials (so the user can check whether 'more physical' combinations may yield reasonable fits as well)
+- [filename]-best_fit_params_{i}.csv: fit_report of the best fit after global->local optimization.
 
 FitBDR.py is similar to those, but with a much simpler interface.
 
