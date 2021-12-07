@@ -70,7 +70,7 @@ while True:
 
                 trials_df = fit_param_to_df(simmons_trials)
                 # save fit report to a file:
-                param_save_path = os.path.join(dirname, f'{file}-fit_result.txt')
+                param_save_path = os.path.join(dirname, f'{file}-best_fit_report.txt')
                 with open(param_save_path, 'w') as fh:
                     fh.write(simmons_fit.fit_report())
 
