@@ -155,10 +155,9 @@ def data_from_csv(filename, sep, current_start_column, min_voltage, max_voltage,
     indicesToDrop = dataFromFile[(abs(dataFromFile.iloc[:, voltage_column].values) < min_voltage)].index
     dataFromFile.drop(indicesToDrop, inplace=True)
     dataFromFile = dataFromFile.reset_index(drop=True)
-
-
+    # collect only voltages (values in voltage_column) within an array
     voltage = dataFromFile.iloc[:, voltage_column].values
-
+    # collect all currents starting at column:current_start_column to the end of the dataset in an array of arrays
     currents = []
     [currents.append(dataFromFile.iloc[:, n].values) for n in range(current_start_column, len(dataFromFile.columns))]
     return voltage, currents
