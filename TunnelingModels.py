@@ -143,17 +143,22 @@ def data_from_csv(filename, sep, current_start_column, min_voltage, max_voltage,
     :return: voltage, currents
     """
     dataFromFile = pd.read_csv(filename, sep=sep, comment=comments, encoding="ANSI")
-    dataFromFile = dataFromFile.dropna()
+
+    dataFromFile = dataFromFile.dropna(axis='columns')
     dataFromFile = dataFromFile.reset_index(drop=True)
 
+    # drop data with abs(voltage)>max_voltage and reset index
     indicesToDrop = dataFromFile[(abs(dataFromFile.iloc[:, voltage_column].values) > max_voltage)].index
-    indicesToDrop.append(dataFromFile[(abs(dataFromFile.iloc[:, voltage_column].values) < min_voltage)].index)
-    new = dataFromFile[(abs(dataFromFile.iloc[:, voltage_column].values) < min_voltage)].index
     dataFromFile.drop(indicesToDrop, inplace=True)
-    dataFromFile.drop(new, inplace=True)
-    print(dataFromFile.iloc[:, voltage_column].values)
+    dataFromFile = dataFromFile.reset_index(drop=True)
+    # drop data with abs(voltage)< min_voltage and reset index
+    indicesToDrop = dataFromFile[(abs(dataFromFile.iloc[:, voltage_column].values) < min_voltage)].index
+    dataFromFile.drop(indicesToDrop, inplace=True)
+    dataFromFile = dataFromFile.reset_index(drop=True)
+
 
     voltage = dataFromFile.iloc[:, voltage_column].values
+
     currents = []
     [currents.append(dataFromFile.iloc[:, n].values) for n in range(current_start_column, len(dataFromFile.columns))]
     return voltage, currents

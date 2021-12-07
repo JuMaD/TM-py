@@ -3,6 +3,7 @@ import numpy as np
 import tkinter as tk
 import os
 import sys
+import winsound
 from TunnelingModels import *
 from lmfit import Parameter, fit_report
 from tkinter import filedialog, messagebox
@@ -29,7 +30,7 @@ while True:
 
             # open file and get data, skip the 0 value because there might be a duplicate
             filename = os.path.join(dirname, file)
-            voltage, currents = data_from_csv(filename, sep='\t', min_voltage=0.01, max_voltage=0.51, current_start_column=2,
+            voltage, currents = data_from_csv(filename, sep='\t', min_voltage=0.1, max_voltage=0.31, current_start_column=2,
                                               voltage_column=0)
 
             # create a parameter object for a simmons model that exists outside the fit function.
@@ -43,21 +44,22 @@ while True:
             simmons_params.add('d', value=1, min=1, max=5, brute_step=0.4)
             simmons_params.add('weight', value=0.1, min=0.1, max=1, vary=False)
             simmons_params.add('beta', value=1, min=0.1, max=1.5, vary=True, brute_step=0.1)
-            simmons_params.add('absolute', value=1, vary=False)
+            simmons_params.add('absolute', value=0, vary=False)
             simmons_params.add('J', value=1, vary=False)
 
             for i in range(1,len(currents)):
-                current = currents[i]
+                current = np.sign(voltage)*currents[i]
 
                 #instantiate Model
                 SimmonsBarrier = SimmonsModel()
-                simmons_brute, simmons_trials, simmons_fit = brute_then_local(SimmonsBarrier, current, voltage, 50, 'leastsq', simmons_params)
-
+                simmons_brute, simmons_trials, simmons_fit = brute_then_local(SimmonsBarrier, current, voltage, 50, 'cobyla', simmons_params)
+                print(f"Best Simmons: {simmons_fit.best_fit}")
+                print(f"Voltage: {voltage}")
                 plt.figure()
-                plt.plot(voltage, np.abs(simmons_fit.best_fit), '-', label=f'Brute->local')
+                plt.plot(voltage, simmons_fit.best_fit, '-', label=f'Brute->local')
                 plt.plot(voltage, current, 'ro', label='data')
                 plt.legend(loc='best')
-                plt.yscale('log')
+                plt.yscale('linear')
                 plt.ylabel('current (A)')
                 plt.xlabel('voltage (V)')
                 plt.title('best fit')
@@ -70,12 +72,17 @@ while True:
 
                 trials_df = fit_param_to_df(simmons_trials)
                 # save fit report to a file:
-                param_save_path = os.path.join(dirname, f'{file}-best_fit_report.txt')
+                param_save_path = os.path.join(dirname, f'{file}-best_fit_report_{i}.txt')
                 with open(param_save_path, 'w') as fh:
                     fh.write(simmons_fit.fit_report())
 
                 result_to_csv(df, filename, f"{file}-simmons-fitresult_{i}")
                 result_to_csv(trials_df, filename, f"{file}-simmons-best_trials_{i}")
+
+
+    frequency = 2500
+    duration = 1500
+    winsound.Beep(frequency, duration)
 
     again = messagebox.askyesno('Finished!', f'Finished wrangling files in {dirname}!\n Select another directory?')
 
