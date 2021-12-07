@@ -3,6 +3,7 @@ from lmfit import Model
 from scipy import constants
 from numpy import exp, sqrt, sinh
 from matplotlib.colors import LogNorm
+import os
 import lmfit
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -22,7 +23,7 @@ def simmons(v, area, alpha, phi, d, weight=1, beta=1, J=0, absolute=1):
     d = d * 10 ** (-9)
 
     if J:
-        area = 0
+        area = 1
 
     J_0 = e / (2 * pi * h * (beta * d) ** 2)
     A = 4 * pi * beta * d * sqrt(2 * m_e) / h
@@ -141,7 +142,7 @@ def data_from_csv(filename, sep, current_start_column, min_voltage, max_voltage,
     :param comments: character that signals a comment line in the csv file
     :return: voltage, currents
     """
-    dataFromFile = pd.read_csv(filename, sep=sep, comment=comments)
+    dataFromFile = pd.read_csv(filename, sep=sep, comment=comments, encoding="ANSI")
     dataFromFile = dataFromFile.dropna()
     dataFromFile = dataFromFile.reset_index(drop=True)
 
@@ -295,14 +296,19 @@ def brute_then_local(model, current, voltage, n_solutions, local_method, paramet
     result_brute = model.fit(current, v=voltage, params=parameters, method='brute', keep=n_solutions)
     best_result = copy.deepcopy(result_brute)
     print("Brute Finished")
+    print(f"Optimizing {n_solutions} candidates with {local_method} optimizer ..")
     trials = []
-
+    result_brute.show_candidates()
     for candidate in result_brute.candidates:
         trial = model.fit(current, v=voltage, params=candidate.params, method=local_method)
         trials.append(trial)
         if trial.chisqr < best_result.chisqr:
             best_result = trial
 
+    print("..done!")
+    print(f"Best trial has chisqr = {best_result.chisqr}")
+    print("Best candidate fit report")
+    print(best_result.fit_report())
 
     return result_brute, trials, best_result
 

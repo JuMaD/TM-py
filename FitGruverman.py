@@ -33,7 +33,7 @@ for i in range(1,len(currents)):
 
     #instantiate Model
     GruvermanBarrier = GruvermanModel()
-    gruverman_brute, gruverman_trials, gruverman_fit = brute_then_local(GruvermanBarrier, current, voltage, 50,'cobyla', gruverman_params)
+    gruverman_brute, gruverman_trials, gruverman_fit = brute_then_local(GruvermanBarrier, current, voltage, 50,'leastsq', gruverman_params)
 
     plt.figure()
     plt.plot(voltage, np.abs(gruverman_fit.best_fit), '-', label=f'Brute->local')

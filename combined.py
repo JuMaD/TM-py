@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-#todo: iterate over a list of list of dicts --> multiple combined models
-#todo: think about the difference between evaluating and fitting here :) --> turn dict into Parameters objects??
+# todo: iterate over a list of list of dicts --> multiple combined models
+# todo: think about the difference between evaluating and fitting here :) --> turn dict into Parameters objects??
 
 model_name = "simmons"
 a = 0.2
